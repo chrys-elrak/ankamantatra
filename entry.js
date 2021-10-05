@@ -1,3 +1,5 @@
+const inquirer = require('inquirer');
+
 const colors = {
     BLACK: 0,
     RED: 1,
@@ -115,9 +117,12 @@ function colorText(text, color = 0, bgColor) {
         }).join('');
 }
 
-async function main() {
+/**
+ * The game function, it will launch the prompt gaming
+ * @param {array} data
+ */
+async function play(data) {
     let play = true;
-    const data = require("./ankamantatra.json");
     loop: while (play) {
         const q = getRandomQuestion(data);
         console.log(`INONA ARY IZAO: ${colorText(q.question, colors.YELLOW)} ?`);
@@ -141,6 +146,63 @@ async function main() {
             play = false;
         }
     }
+}
+
+/**
+ * Create question and answer, it will write on the json file
+ * @param {array} data
+ */
+async function riddle(data) {
+    const { question } = await inquirer.prompt({
+        message: colorText("What's the question ?", colors.GREEN),
+        name: 'question'
+    });
+    const { answer } = await inquirer.prompt({
+        message: "What's the answer ?",
+        name: 'answer'
+    });
+    const { possiblities } = await inquirer.prompt({
+        message: "Enter the possiblities separed by semicolon (;)",
+        name: 'possiblities'
+    });
+    console.log(`RIDDLE: ${question}\nANSWER:${answer}\nPOSSIBILITIES:${possiblities}`);
+    const { sure } = await inquirer.prompt({
+        message: "Do you want to save this riddle?",
+        name: 'sure',
+        type: 'confirm'
+    });
+    if (!sure) {
+        main();
+    }
+}
+
+async function about() { }
+
+async function main() {
+    const data = require("./ankamantatra.json");
+
+    const { typeOfAction } = await inquirer
+        .prompt([{
+            type: "list",
+            name: 'typeOfAction',
+            message: "What do you want to do? ",
+            choices: ["Play", "Riddle", "About", "Quit"],
+            filter: (val) => val.toLowerCase()
+        }]);
+
+    if (typeOfAction === 'play') {
+        return play(data);
+    }
+
+    if (typeOfAction === 'riddle') {
+        return riddle(data);
+    }
+
+    if (typeOfAction === 'about') {
+        return about();
+    }
+
+    console.log(colorText(`VELOMA ✋ !`, colors.BLUE, true));
 }
 
 main();
