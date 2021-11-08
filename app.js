@@ -117,7 +117,7 @@ function colorText(text, color = 0, bgColor) {
 
 async function main() {
     let play = true;
-    const data = require("./ankamantatra.json");
+    const data = require("./data.json");
     loop: while (play) {
         const q = getRandomQuestion(data);
         console.log(`INONA ARY IZAO: ${colorText(q.question, colors.YELLOW)} ?`);
